@@ -67,6 +67,15 @@ const profilePointerSensor = PointerSensor.configure({
   activationConstraints: () => undefined,
 })
 
+// 导入框支持一次输入多个订阅：按换行、逗号、分号或空白拆分
+const parseProfileUrls = (raw: string) =>
+  raw
+    .split(/[\s,;]+/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+
+const isHttpProfileUrl = (url: string) => /^https?:\/\//i.test(url)
+
 interface ProfileSwitchRequest {
   profile: string
   notifySuccess: boolean
@@ -208,49 +217,94 @@ const ProfilePage = () => {
     return items.filter((i) => i?.type && type1.includes(i.type))
   }, [profiles])
 
+  const urlList = useMemo(() => parseProfileUrls(url), [url])
+
   const currentActivatings = () => {
     return [...new Set([profiles.current ?? ''])].filter(Boolean)
   }
 
   const onImport = async () => {
-    if (!url) return
-    if (!/^https?:\/\//i.test(url)) {
+    const urls = parseProfileUrls(url)
+    if (!urls.length) return
+    if (urls.some((item) => !isHttpProfileUrl(item))) {
       showNotice.error('profiles.page.feedback.errors.invalidUrl')
       return
     }
     setLoading(true)
 
-    const handleImportSuccess = async (noticeKey: string) => {
-      showNotice.success(noticeKey)
-      setUrl('')
-      await performRobustRefresh()
-    }
     try {
-      await importProfile(url)
-      await handleImportSuccess('shared.feedback.notifications.importSuccess')
-    } catch (initialErr) {
-      console.warn('[订阅导入] 首次导入失败:', initialErr)
+      // 逐个导入：单个链接失败不影响其余链接，失败的链接保留在输入框中以便重试
+      const failed: string[] = []
+      let proxyImported = 0
+      let lastError: unknown
+      let retryNoticeShown = false
 
-      const initialDetail = errorDetail(initialErr)
-      if (initialDetail.toLowerCase().includes('legacy tls')) {
-        showNotice.error(initialErr)
-        return
+      for (const target of urls) {
+        try {
+          await importProfile(target)
+        } catch (initialErr) {
+          console.warn('[订阅导入] 首次导入失败:', target, initialErr)
+
+          if (errorDetail(initialErr).toLowerCase().includes('legacy tls')) {
+            failed.push(target)
+            lastError = initialErr
+            continue
+          }
+
+          if (!retryNoticeShown) {
+            showNotice.info('profiles.page.feedback.notifications.importRetry')
+            retryNoticeShown = true
+          }
+
+          try {
+            await importProfile(target, {
+              with_proxy: false,
+              self_proxy: true,
+            })
+            proxyImported += 1
+          } catch (retryErr) {
+            console.error('[订阅导入] 导入失败:', target, retryErr)
+            failed.push(target)
+            lastError = retryErr
+          }
+        }
       }
 
-      showNotice.info('profiles.page.feedback.notifications.importRetry')
-      try {
-        await importProfile(url, {
-          with_proxy: false,
-          self_proxy: true,
-        })
-        await handleImportSuccess(
-          'shared.feedback.notifications.importWithClashProxy',
+      const succeeded = urls.length - failed.length
+      setUrl(failed.join('\n'))
+
+      if (!failed.length) {
+        if (urls.length > 1) {
+          showNotice.success(
+            'profiles.page.feedback.notifications.importBatchSuccess',
+            { count: succeeded },
+          )
+        } else if (proxyImported) {
+          showNotice.success(
+            'shared.feedback.notifications.importWithClashProxy',
+          )
+        } else {
+          showNotice.success('shared.feedback.notifications.importSuccess')
+        }
+      } else if (succeeded) {
+        showNotice.error(
+          'profiles.page.feedback.notifications.importBatchPartial',
+          { count: succeeded, total: urls.length, failed: failed.length },
         )
-      } catch (retryErr) {
+      } else if (urls.length > 1) {
+        showNotice.error(
+          'profiles.page.feedback.notifications.importBatchFail',
+          { total: urls.length },
+        )
+      } else {
         showNotice.error(
           'profiles.page.feedback.notifications.importFail',
-          retryErr,
+          lastError,
         )
+      }
+
+      if (succeeded) {
+        await performRobustRefresh()
       }
     } finally {
       setDisabled(false)
@@ -708,7 +762,11 @@ const ProfilePage = () => {
     <BasePage
       full
       title={t('profiles.page.title')}
-      contentStyle={{ height: '100%' }}
+      contentStyle={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
       header={
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           {!batchMode ? (
@@ -824,20 +882,28 @@ const ProfilePage = () => {
           pt: 1,
           mb: 0.5,
           mx: '10px',
-          height: '36px',
+          minHeight: '36px',
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-start',
         }}
       >
         <BaseStyledTextField
           value={url}
           variant="outlined"
+          multiline
+          minRows={1}
+          maxRows={4}
           onChange={(e) => setUrl(e.target.value)}
           onKeyDown={(event) => {
-            if (event.key !== 'Enter' || event.nativeEvent.isComposing) {
+            // 多行输入：Enter 换行，Ctrl/Cmd + Enter 触发导入
+            if (
+              event.key !== 'Enter' ||
+              !(event.ctrlKey || event.metaKey) ||
+              event.nativeEvent.isComposing
+            ) {
               return
             }
-            if (!url || disabled || loading) {
+            if (!urlList.length || disabled || loading) {
               return
             }
             event.preventDefault()
@@ -846,7 +912,8 @@ const ProfilePage = () => {
           placeholder={t('profiles.page.importForm.placeholder')}
           slotProps={{
             input: {
-              sx: { pr: 1 },
+              // 多行输入时 MUI 会把内边距移到容器上，这里去掉以保持单行状态的原高度
+              sx: { py: 0, pr: 1 },
               endAdornment: !url ? (
                 <IconButton
                   size="small"
@@ -870,7 +937,7 @@ const ProfilePage = () => {
           }}
         />
         <Button
-          disabled={!url || disabled}
+          disabled={!urlList.length || disabled}
           loading={loading}
           variant="contained"
           size="small"
@@ -893,7 +960,9 @@ const ProfilePage = () => {
         sx={{
           pl: '10px',
           pr: '10px',
-          height: 'calc(100% - 48px)',
+          // 导入框会随行数增高，列表用剩余空间自行滚动
+          flex: 1,
+          minHeight: 0,
           overflowY: 'auto',
         }}
       >

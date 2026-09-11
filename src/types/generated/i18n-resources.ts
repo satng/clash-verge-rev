@@ -451,6 +451,9 @@ export interface TranslationResources {
           }
           notifications: {
             batchDeleted: string
+            importBatchFail: string
+            importBatchPartial: string
+            importBatchSuccess: string
             importFail: string
             importNeedsRefresh: string
             importRetry: string

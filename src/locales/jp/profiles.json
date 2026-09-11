@@ -20,7 +20,7 @@
       "title": "バッチ操作"
     },
     "importForm": {
-      "placeholder": "プロファイルファイルのURL",
+      "placeholder": "プロファイルのURL（1行に1つ）",
       "actions": {
         "paste": "貼り付け"
       }
@@ -44,6 +44,9 @@
         "importFail": "Clashプロキシを使用してもインポートに失敗しました。",
         "importNeedsRefresh": "Profile imported but may need manual refresh",
         "importSuccess": "Profile imported successfully, please restart if not visible",
+        "importBatchSuccess": "{{count}} 件のプロファイルをインポートしました",
+        "importBatchPartial": "{{total}} 件中 {{count}} 件をインポートしました。{{failed}} 件は失敗し、入力欄に残しています",
+        "importBatchFail": "{{total}} 件のプロファイルをすべてインポートできませんでした",
         "profileSwitched": "プロファイルが切り替えられました。",
         "profileReactivated": "プロファイルが再アクティブ化されました。",
         "switchBusy": "Profile switch is already in progress",

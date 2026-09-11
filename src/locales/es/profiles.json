@@ -20,7 +20,7 @@
       "title": "Batch Operations"
     },
     "importForm": {
-      "placeholder": "Enlace del archivo de suscripción",
+      "placeholder": "Enlace de suscripción, uno por línea",
       "actions": {
         "paste": "Pegar"
       }
@@ -44,6 +44,9 @@
         "importFail": "Error al importar incluso con el proxy de Clash",
         "importNeedsRefresh": "Profile imported but may need manual refresh",
         "importSuccess": "Profile imported successfully, please restart if not visible",
+        "importBatchSuccess": "Se importaron {{count}} suscripciones",
+        "importBatchPartial": "Se importaron {{count}} de {{total}} suscripciones; {{failed}} fallaron y se mantienen en la entrada",
+        "importBatchFail": "No se pudieron importar las {{total}} suscripciones",
         "profileSwitched": "Suscripción cambiada",
         "profileReactivated": "Suscripción reactivada",
         "switchBusy": "Profile switch is already in progress",

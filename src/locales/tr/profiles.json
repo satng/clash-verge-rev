@@ -20,7 +20,7 @@
       "title": "Toplu İşlemler"
     },
     "importForm": {
-      "placeholder": "Profil URL'si",
+      "placeholder": "Profil URL'si, her satıra bir tane",
       "actions": {
         "paste": "Yapıştır"
       }
@@ -44,6 +44,9 @@
         "importFail": "Clash vekil ile bile içe aktarma başarısız oldu",
         "importNeedsRefresh": "Profile imported but may need manual refresh",
         "importSuccess": "Profile imported successfully, please restart if not visible",
+        "importBatchSuccess": "{{count}} profil içe aktarıldı",
+        "importBatchPartial": "{{total}} profilden {{count}} tanesi içe aktarıldı; {{failed}} tanesi başarısız oldu ve giriş alanında bırakıldı",
+        "importBatchFail": "{{total}} profilin tümü içe aktarılamadı",
         "profileSwitched": "Profil Değiştirildi",
         "profileReactivated": "Profil Yeniden Etkinleştirildi",
         "switchBusy": "Profil değiştirme işlemi zaten devam ediyor",

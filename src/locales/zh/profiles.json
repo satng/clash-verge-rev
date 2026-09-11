@@ -20,7 +20,7 @@
       "title": "批量操作"
     },
     "importForm": {
-      "placeholder": "订阅文件链接",
+      "placeholder": "订阅链接，每行一个",
       "actions": {
         "paste": "粘贴"
       }
@@ -44,6 +44,9 @@
         "importFail": "使用 Clash 代理导入订阅失败",
         "importNeedsRefresh": "订阅已导入，但可能需要手动刷新",
         "importSuccess": "订阅已成功导入，如未显示请重启应用",
+        "importBatchSuccess": "已成功导入 {{count}} 个订阅",
+        "importBatchPartial": "已成功导入 {{count}}/{{total}} 个订阅，{{failed}} 个失败并保留在输入框中",
+        "importBatchFail": "{{total}} 个订阅全部导入失败",
         "profileSwitched": "订阅已切换",
         "profileReactivated": "订阅已激活",
         "switchBusy": "正在切换订阅，请稍后重试",

@@ -20,7 +20,7 @@
       "title": "Batch Operations"
     },
     "importForm": {
-      "placeholder": "آدرس پروفایل",
+      "placeholder": "آدرس پروفایل، هر خط یک آدرس",
       "actions": {
         "paste": "چسباندن"
       }
@@ -44,6 +44,9 @@
         "importFail": "Import failed even with Clash proxy",
         "importNeedsRefresh": "Profile imported but may need manual refresh",
         "importSuccess": "Profile imported successfully, please restart if not visible",
+        "importBatchSuccess": "Imported {{count}} subscriptions",
+        "importBatchPartial": "Imported {{count}} of {{total}} subscriptions; {{failed}} failed and kept in the input",
+        "importBatchFail": "Failed to import all {{total}} subscriptions",
         "profileSwitched": "پروفایل تغییر یافت",
         "profileReactivated": "پروفایل مجدداً فعال شد",
         "switchBusy": "Profile switch is already in progress",

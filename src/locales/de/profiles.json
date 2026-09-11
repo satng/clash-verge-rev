@@ -20,7 +20,7 @@
       "title": "Batch Operations"
     },
     "importForm": {
-      "placeholder": "Abonnement-Datei-Link",
+      "placeholder": "Abonnement-Link, einer pro Zeile",
       "actions": {
         "paste": "Einfügen"
       }
@@ -44,6 +44,9 @@
         "importFail": "Import des Abonnements auch mit Clash-Proxy fehlgeschlagen",
         "importNeedsRefresh": "Profile imported but may need manual refresh",
         "importSuccess": "Profile imported successfully, please restart if not visible",
+        "importBatchSuccess": "{{count}} Abonnements importiert",
+        "importBatchPartial": "{{count}} von {{total}} Abonnements importiert; {{failed}} fehlgeschlagen und im Eingabefeld beibehalten",
+        "importBatchFail": "Alle {{total}} Abonnements konnten nicht importiert werden",
         "profileSwitched": "Abonnement gewechselt",
         "profileReactivated": "Abonnement erneut aktiviert",
         "switchBusy": "Profile switch is already in progress",

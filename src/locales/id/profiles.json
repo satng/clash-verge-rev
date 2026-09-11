@@ -20,7 +20,7 @@
       "title": "Batch Operations"
     },
     "importForm": {
-      "placeholder": "URL Profil",
+      "placeholder": "URL Profil, satu per baris",
       "actions": {
         "paste": "Tempel"
       }
@@ -44,6 +44,9 @@
         "importFail": "Import failed even with Clash proxy",
         "importNeedsRefresh": "Profile imported but may need manual refresh",
         "importSuccess": "Profile imported successfully, please restart if not visible",
+        "importBatchSuccess": "Berhasil mengimpor {{count}} profil",
+        "importBatchPartial": "Berhasil mengimpor {{count}} dari {{total}} profil; {{failed}} gagal dan tetap ada di kolom input",
+        "importBatchFail": "Gagal mengimpor semua {{total}} profil",
         "profileSwitched": "Profil Beralih",
         "profileReactivated": "Profil Diaktifkan Kembali",
         "switchBusy": "Profile switch is already in progress",
